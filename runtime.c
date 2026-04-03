@@ -473,7 +473,8 @@ int class_getVersion(Class theClass)
 
 const char *class_getWeakIvarLayout(Class cls)
 {
-	assert(0 && "Weak ivars not supported");
+	CHECK_ARG(cls);
+	// Weak ivar layout metadata is not exposed yet.
 	return NULL;
 }
 
@@ -577,7 +578,9 @@ void class_setVersion(Class theClass, int version)
 
 void class_setWeakIvarLayout(Class cls, const char *layout)
 {
-	assert(0 && "Not implemented");
+	(void)layout;
+	if (Nil == cls) { return; }
+	// Weak ivar layout metadata is not exposed yet.
 }
 
 const char * ivar_getName(Ivar ivar)
@@ -846,4 +849,3 @@ void objc_registerClassPair(Class cls)
 	class_table_insert(cls);
 	objc_resolve_class(cls);
 }
-
