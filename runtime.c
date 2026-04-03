@@ -474,7 +474,11 @@ int class_getVersion(Class theClass)
 const char *class_getWeakIvarLayout(Class cls)
 {
 	CHECK_ARG(cls);
-	// Weak ivar layout metadata is not exposed yet.
+	/*
+	 * The modern v2 class layout does not currently store weak-ivar bitmap
+	 * metadata.  Clang emits ARC cleanup via .cxx_destruct, but there is no
+	 * runtime-owned weak layout payload to expose here.
+	 */
 	return NULL;
 }
 
@@ -580,7 +584,10 @@ void class_setWeakIvarLayout(Class cls, const char *layout)
 {
 	(void)layout;
 	if (Nil == cls) { return; }
-	// Weak ivar layout metadata is not exposed yet.
+	/*
+	 * The modern v2 class layout does not currently provide storage for weak
+	 * layout metadata, so there is nothing to apply here yet.
+	 */
 }
 
 const char * ivar_getName(Ivar ivar)

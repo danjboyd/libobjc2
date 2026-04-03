@@ -35,6 +35,7 @@ set(TESTS
 	RuntimeTest.m
 	SuperMethodMissing.m
 	WeakBlock_arc.m
+	WeakIvarLayout_arc.m
 	WeakRefLoad.m
 	WeakReferences_arc.m
 	WeakImportClass.m
