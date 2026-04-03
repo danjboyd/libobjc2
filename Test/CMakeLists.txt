@@ -31,6 +31,7 @@ set(TESTS
 	ProtocolExtendedProperties.m
 	PropertyIntrospectionTest.m
 	ProtocolCreation.m
+	RuntimeRegression.m
 	ResurrectInDealloc_arc.m
 	RuntimeTest.m
 	SuperMethodMissing.m
