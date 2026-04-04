@@ -48,6 +48,7 @@ set(TESTS
 	msgInterpose.m
 	NilException.m
 	MethodArguments.m
+	ModernWeakIvarOwnership_arc.m
 	zeroSizedIVar.m
 	exchange.m
 	hash_table_delete.c
