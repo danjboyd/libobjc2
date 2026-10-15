@@ -1168,6 +1168,15 @@ OBJC_PUBLIC
 void __attribute__((weak)) objc_enumerationMutation(id obj);
 
 /**
+ * Sets the function that objc_enumerationMutation() calls when a collection is
+ * mutated during a foreach iteration.  The handler is passed the collection
+ * and may raise an exception.  If it returns, iteration continues.  Passing
+ * NULL restores the default behaviour, which is to abort.
+ */
+OBJC_PUBLIC
+void objc_setEnumerationMutationHandler(void (*handler)(id));
+
+/**
  * Ensure that `+initialize` has been sent to the class of the argument (or the
  * argument, if it is a class).  This will not call `+initialize` if it has
  * been called already, either via an explicit call to this function or by

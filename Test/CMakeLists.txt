@@ -48,6 +48,7 @@ set(TESTS
 	NilTypeQualifier.m
 	msgInterpose.m
 	NilException.m
+	EnumerationMutationHandler.m
 	MethodArguments.m
 	MethodImplementationBeforeInitialize.m
 	zeroSizedIVar.m
