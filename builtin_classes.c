@@ -31,13 +31,13 @@ static struct objc_class _OBJC_METACLASS_ProtocolGCC = {
 static struct objc_class _OBJC_METACLASS_ProtocolGSv1 = {
 	.isa = &_OBJC_METACLASS_Object,
 	.super_class = &_OBJC_METACLASS_Object,
-	.name = "ProtocolGSv2",
+	.name = "ProtocolGSv1",
 	.info = objc_class_flag_meta,
 };
 static struct objc_class _OBJC_METACLASS___IncompleteProtocol = {
 	.isa = &_OBJC_METACLASS_Object,
 	.super_class = &_OBJC_METACLASS_Object,
-	.name = "ProtocolGCC",
+	.name = "__IncompleteProtocol",
 	.info = objc_class_flag_meta,
 };
 
@@ -56,14 +56,14 @@ OBJC_PUBLIC struct objc_class _OBJC_CLASS_ProtocolGCC = {
 };
 
 OBJC_PUBLIC struct objc_class _OBJC_CLASS___IncompleteProtocol = {
-	.isa = &_OBJC_METACLASS_Protocol,
+	.isa = &_OBJC_METACLASS___IncompleteProtocol,
 	.super_class = &_OBJC_CLASS_Protocol,
 	.name = "__IncompleteProtocol",
 	.info = objc_class_flag_permanent_instances,
 };
 
 OBJC_PUBLIC struct objc_class _OBJC_CLASS_ProtocolGSv1 = {
-	.isa = &_OBJC_METACLASS_Protocol,
+	.isa = &_OBJC_METACLASS_ProtocolGSv1,
 	.super_class = &_OBJC_CLASS_Protocol,
 	.name = "ProtocolGSv1",
 	.info = objc_class_flag_permanent_instances,

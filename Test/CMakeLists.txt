@@ -32,6 +32,7 @@ set(TESTS
 	ProtocolExtendedProperties.m
 	PropertyIntrospectionTest.m
 	ProtocolCreation.m
+	ProtocolMessaging.m
 	ResurrectInDealloc_arc.m
 	RuntimeTest.m
 	SuperMethodMissing.m
