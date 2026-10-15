@@ -420,18 +420,39 @@ struct objc_slot *objc_get_slot(Class cls, SEL selector)
 // Public API
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Looks up a method in a class that has not been sent +initialize yet, and so
+ * has no dtable for objc_get_slot2() to search.  This searches the method
+ * lists instead and, unlike sending a message, does not initialize the class.
+ * Returns NULL if the class has a dtable or does not implement the method.
+ */
+static Method lookup_method_without_dtable(Class cls, SEL selector)
+{
+	if (classHasDtable(cls))
+	{
+		return NULL;
+	}
+	return class_getInstanceMethod(cls, selector);
+}
+
 BOOL class_respondsToSelector(Class cls, SEL selector)
 {
 	if (0 == selector || 0 == cls) { return NO; }
 
-	return NULL != objc_get_slot2(cls, selector, NULL);
+	return (NULL != objc_get_slot2(cls, selector, NULL)) ||
+	       (NULL != lookup_method_without_dtable(cls, selector));
 }
 
 IMP class_getMethodImplementation(Class cls, SEL name)
 {
 	if ((Nil == cls) || (NULL == name)) { return (IMP)0; }
 	struct objc_slot2 * slot = objc_get_slot2(cls, name, NULL);
-	return NULL != slot ? slot->method : __objc_msg_forward2(nil, name);
+	if (NULL != slot)
+	{
+		return slot->method;
+	}
+	Method m = lookup_method_without_dtable(cls, name);
+	return NULL != m ? method_getImplementation(m) : __objc_msg_forward2(nil, name);
 }
 
 IMP class_getMethodImplementation_stret(Class cls, SEL name)

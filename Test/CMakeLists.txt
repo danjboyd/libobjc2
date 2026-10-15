@@ -49,6 +49,7 @@ set(TESTS
 	msgInterpose.m
 	NilException.m
 	MethodArguments.m
+	MethodImplementationBeforeInitialize.m
 	zeroSizedIVar.m
 	exchange.m
 	hash_table_delete.c
