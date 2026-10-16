@@ -703,6 +703,11 @@ extern "C" OBJC_PUBLIC void objc_autoreleasePoolPop(void *pool)
 			{
 				emptyPool(tls, pool);
 			}
+			if (nil != tls->returnRetained)
+			{
+				release(tls->returnRetained);
+				tls->returnRetained = nil;
+			}
 			return;
 		}
 	}
@@ -724,49 +729,45 @@ extern "C" OBJC_PUBLIC id objc_autorelease(id obj)
 	return obj;
 }
 
+/**
+ * Returns OBJ, which the caller would otherwise autorelease, without
+ * autoreleasing it yet: OBJ waits in the thread's return-retained slot, so
+ * that a caller that retains it at once with
+ * objc_retainAutoreleasedReturnValue() takes over the reference instead.
+ * The object already in the slot, which no caller took, is autoreleased now,
+ * and the next autorelease pool push or pop disposes of OBJ the same way, so
+ * an object that is not taken lives exactly as long as an autoreleased one.
+ * This is done whether or not the runtime's own autorelease pool is in use.
+ */
 extern "C" OBJC_PUBLIC id objc_autoreleaseReturnValue(id obj)
 {
-	if (!useARCAutoreleasePool) 
+	struct arc_tls* tls = getARCThreadData();
+	if (NULL != tls)
 	{
-		struct arc_tls* tls = getARCThreadData();
-		if (NULL != tls)
-		{
-			objc_autorelease(tls->returnRetained);
-			tls->returnRetained = obj;
-			return obj;
-		}
+		objc_autorelease(tls->returnRetained);
+		tls->returnRetained = obj;
+		return obj;
 	}
 	return objc_autorelease(obj);
 }
 
 extern "C" OBJC_PUBLIC id objc_retainAutoreleasedReturnValue(id obj)
 {
-	// If the previous object was released  with objc_autoreleaseReturnValue()
-	// just before return, then it will not have actually been autoreleased.
-	// Instead, it will have been stored in TLS.  We just remove it from TLS
-	// and undo the fake autorelease.
+	// If the object was returned with objc_autoreleaseReturnValue(), then it
+	// was not actually autoreleased but stored in TLS.  We just remove it
+	// from TLS and take over the reference that the slot held.
 	//
-	// If the object was not returned with objc_autoreleaseReturnValue() then
-	// we actually autorelease the fake object. and then retain the argument.
-	// In tis case, this is equivalent to objc_retain().
+	// Otherwise this is equivalent to objc_retain().  In particular, an
+	// object that happens to be the most recent entry in the autorelease
+	// pool must not be taken out of it: the method may have returned an
+	// object that it does not own (an instance variable, at +0) and that
+	// some other code autoreleased earlier, and that code may still be
+	// relying on the pool to keep the object alive.
 	struct arc_tls* tls = getARCThreadData();
-	if (NULL != tls)
+	if ((NULL != tls) && (obj == tls->returnRetained))
 	{
-		// If we're using our own autorelease pool, just pop the object from the top
-		if (useARCAutoreleasePool)
-		{
-			if ((NULL != tls->pool) &&
-			    (*(tls->pool->insert-1) == obj))
-			{
-				tls->pool->insert--;
-				return obj;
-			}
-		}
-		else if (obj == tls->returnRetained)
-		{
-			tls->returnRetained = NULL;
-			return obj;
-		}
+		tls->returnRetained = NULL;
+		return obj;
 	}
 	return objc_retain(obj);
 }
